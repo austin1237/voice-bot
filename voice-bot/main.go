@@ -11,7 +11,14 @@ import (
 
 func main() {
 	// Create a new Discord session using the bot token.
-	dg, err := discordgo.New("Bot " + "MTA3OTE2NTQyNjcyMzk4NzU0Ng.GaMoPx.4fk610DYDAH9imm3Y5eoUV3rXqozTs5b-V0liY")
+	token, ok := os.LookupEnv("DISCORD_BOT_TOKEN")
+	if !ok {
+		fmt.Println("Error: DISCORD_BOT_TOKEN environment variable not set.")
+		return
+	}
+	
+	dg, err := discordgo.New("Bot " + token)
+	
 	if err != nil {
 		fmt.Println("Error creating Discord session: ", err)
 		return
