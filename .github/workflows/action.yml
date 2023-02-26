@@ -1,0 +1,37 @@
+name: Build and Deploy Docker Image to Docker Hub
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./voice-bot
+          push: false
+          tags: ${{ env.DOCKER_HUB_USERNAME }}/voice-bot:latest
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ env.DOCKER_HUB_PASSWORD }}
+
+      - name: Push Docker image to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: ./voice-bot
+          push: true
+          tags: ${{ env.DOCKER_HUB_USERNAME }}/voice-bot:latest
